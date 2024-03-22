@@ -53,7 +53,7 @@ inputs_state Engine::inputs()
 
     //joystick
     joystick_state joy;
-    joy.b1 = joy.b2 = joy.b3 = joy.b1down = joy.b2down = joy.b3down = false;
+    joy.b1 = joy.b2 = joy.b3 = joy.b1down = joy.b2down = joy.b3down = joy.b1pressed = joy.b2pressed = joy.b3pressed = false;    
     joy.x = 0;
     joy.y = 0;
     joy.novalue = true;

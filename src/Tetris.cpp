@@ -240,7 +240,7 @@ void Tetris::draw(void)
 {
   if (currentStage == STAGE_TITLE_SCREEN)
   {
-    engine_core_ref->canvas->fillBitmap(title_screen);
+    engine_core_ref->canvas->fillBitmap(&title_screen[0]);
 
     if (titleScreenOn)
       engine_core_ref->canvas->print(4, 96, (char *)PRESS_ANY_KEY, MAGENTA);
@@ -249,13 +249,13 @@ void Tetris::draw(void)
   if (currentStage == STAGE_INGAME || currentStage == STAGE_GAMEOVER)
   {
     // background
-    engine_core_ref->canvas->fillBitmap(bgImage, MAGENTA);
+    engine_core_ref->canvas->fillBitmap(&bgImage[0]);
 
     // sprites
     for (int i = 0; i < BOARD_WIDTH; i++)
       for (int j = 0; j < (BOARD_HEIGHT - 1); j++)
         if (this->hasBlock(i, j))
-          engine_core_ref->canvas->drawRGBBitmap(i * 8, j * 8, block_still, 8, 8);
+          engine_core_ref->canvas->drawRGBBitmap(i * 8, j * 8, &block_still[0], 8, 8);
 
     if (currentStage == STAGE_INGAME)
     {
@@ -264,7 +264,7 @@ void Tetris::draw(void)
         engine_core_ref->canvas->drawRGBBitmap(
             (currentPiece.x + currentPiece.blocks[i].x) * 8,
             (currentPiece.y + currentPiece.blocks[i].y) * 8,
-            block, 8, 8, MAGENTA);
+            &block[0], 8, 8, MAGENTA);
     }
 
     // fonts
@@ -276,7 +276,7 @@ void Tetris::draw(void)
 
   if (currentStage == STAGE_GAMEOVER)
   {
-    engine_core_ref->canvas->drawRGBBitmap(0, 48, gameover, 128, 32, MAGENTA);
+    engine_core_ref->canvas->drawRGBBitmap(0, 48, &gameover[0], 128, 32, MAGENTA);
   }
 }
 

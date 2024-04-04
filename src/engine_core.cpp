@@ -9,7 +9,7 @@
 Adafruit_ST7735 *tft = new Adafruit_ST7735(TFT_CS, TFT_DC, TFT_RST);
 int rgb_r, rgb_g, rgb_b;
 
-uint lastMillis, lastMillisJoy;
+ulong lastMillis, lastMillisJoy;
 bool button1Pressed = false, button2Pressed = false, button3Pressed = false;
 uint millisToJoy = 100;
 float xCenterAvg = 0;
@@ -18,7 +18,9 @@ float stickXCenter = 512;
 float stickYCenter = 512;
 long calibrateSamples = 0;
 
+ulong lastLockMillis = 0;
 short intFps, fps = 0;
+float frameTimeLock = 33.33; //(ms) -> 30 fps
 
 Engine::Engine()
 {
@@ -38,7 +40,7 @@ void Engine::reset()
     pinMode(RGB_B, OUTPUT);
 
     fps = intFps = 0;
-    lastMillis = millis();
+    lastMillis = lastLockMillis = millis();
 
     // joy
     pinMode(JOY_BT, INPUT_PULLUP);
@@ -129,6 +131,13 @@ void Engine::sound()
 }
 void Engine::stats(void)
 {
+    //frametime
+    uint frameTime = millis() - lastLockMillis;
+    if (frameTime < frameTimeLock) { 
+        delay(frameTimeLock - frameTime); 
+    }    
+    lastLockMillis = millis();
+
     intFps++;
     if (millis() - lastMillis >= 1000)
     {

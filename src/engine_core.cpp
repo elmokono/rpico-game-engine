@@ -1,12 +1,14 @@
 #include <Arduino.h>
-#include <Adafruit_ST7735.h> // gpu driver
+//#include <Adafruit_ST7735.h> // gpu driver
+#include <TFT_eSPI.h>
 #include <SPI.h>
 #include <stdio.h>
 #include <Adafruit_Sensor.h>
 #include <Wire.h>
 #include "engine_core.h"
 
-Adafruit_ST7735 *tft = new Adafruit_ST7735(TFT_CS, TFT_DC, TFT_RST);
+//Adafruit_ST7735 *tft2 = new Adafruit_ST7735(TFT_CS, TFT_DC, TFT_RST);
+//TFT_eSPI tft = TFT_eSPI(128, 128);
 int rgb_r, rgb_g, rgb_b;
 
 uint lastMillis, lastMillisJoy;
@@ -27,11 +29,20 @@ Engine::Engine()
 
 void Engine::reset()
 {
-    canvas = new GFXcanvas16Opt(128, 128);
+    //canvas = new GFXcanvas16Opt(128, 128);
 
-    tft->initR(INITR_144GREENTAB);
-    tft->setRotation(0);
-    tft->fillScreen(ST7735_CYAN);
+    //tft->initR(INITR_144GREENTAB);
+    //tft->setRotation(0);
+    //tft->fillScreen(ST7735_CYAN);
+    spr_background = TFT_eSprite(&canvas);
+    spr_background.createSprite(canvas.width(), canvas.height());
+
+    canvas.init();
+    canvas.setRotation(0);
+    canvas.fillScreen(TFT_BLACK);
+
+    spr_background.setColorDepth(8);
+    spr_background.createSprite(128, 128);
 
     pinMode(RGB_R, OUTPUT);
     pinMode(RGB_G, OUTPUT);
@@ -121,7 +132,8 @@ void Engine::display()
     analogWrite(RGB_G, rgb_g * 4);
     analogWrite(RGB_B, rgb_b * 4);
 
-    tft->drawRGBBitmap(0, 0, canvas->getBuffer(), tft->height(), tft->width());
+    //tft->drawRGBBitmap(0, 0, canvas->getBuffer(), tft->height(), tft->width());
+    spr_background.pushSprite(0, 0, TFT_MAGENTA);
 }
 void Engine::sound()
 {

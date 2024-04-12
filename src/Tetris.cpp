@@ -240,43 +240,44 @@ void Tetris::draw(void)
 {
   if (currentStage == STAGE_TITLE_SCREEN)
   {
-    engine_core_ref->canvas->fillBitmap(title_screen);
+    //engine_core_ref->canvas .fillBitmap(title_screen);
+    engine_core_ref->spr_background.pushImage(0, 0, 128, 128, title_screen);
 
     if (titleScreenOn)
-      engine_core_ref->canvas->print(4, 96, (char *)PRESS_ANY_KEY, MAGENTA);
+      engine_core_ref->canvas.print(4, 96, (char *)PRESS_ANY_KEY, MAGENTA);
   }
 
   if (currentStage == STAGE_INGAME || currentStage == STAGE_GAMEOVER)
   {
     // background
-    engine_core_ref->canvas->fillBitmap(bgImage, MAGENTA);
+    engine_core_ref->canvas.fillBitmap(bgImage, MAGENTA);
 
     // sprites
     for (int i = 0; i < BOARD_WIDTH; i++)
       for (int j = 0; j < (BOARD_HEIGHT - 1); j++)
         if (this->hasBlock(i, j))
-          engine_core_ref->canvas->drawRGBBitmap(i * 8, j * 8, block_still, 8, 8);
+          engine_core_ref->canvas.drawRGBBitmap(i * 8, j * 8, block_still, 8, 8);
 
     if (currentStage == STAGE_INGAME)
     {
       Piece currentPiece = getCurrentPiece();
       for (int i = 0; i < BLOCKS_PER_PIECE; i++)
-        engine_core_ref->canvas->drawRGBBitmap(
+        engine_core_ref->canvas.drawRGBBitmap(
             (currentPiece.x + currentPiece.blocks[i].x) * 8,
             (currentPiece.y + currentPiece.blocks[i].y) * 8,
             block, 8, 8, MAGENTA);
     }
 
     // fonts
-    engine_core_ref->canvas->print(2, 2, (char *)"Score", MAGENTA);
+    engine_core_ref->canvas.print(2, 2, (char *)"Score", MAGENTA);
     char score_value[7];
     snprintf(score_value, sizeof(score_value), "%06d", this->getScore());
-    engine_core_ref->canvas->print(78, 2, score_value, MAGENTA);
+    engine_core_ref->canvas.print(78, 2, score_value, MAGENTA);
   }
 
   if (currentStage == STAGE_GAMEOVER)
   {
-    engine_core_ref->canvas->drawRGBBitmap(0, 48, gameover, 128, 32, MAGENTA);
+    engine_core_ref->canvas.drawRGBBitmap(0, 48, gameover, 128, 32, MAGENTA);
   }
 }
 

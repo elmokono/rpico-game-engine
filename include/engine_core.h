@@ -1,6 +1,7 @@
 #include <Arduino.h>
-#include <Adafruit_ST7735.h> // gpu driver
-#include <GFXcanvas16Opt.h> // canvas layer
+//#include <Adafruit_ST7735.h> // gpu driver
+#include <TFT_eSPI.h>
+//#include <GFXcanvas16Opt.h> // canvas layer
 #include <SPI.h>
 #include <stdio.h>
 #include <Adafruit_MPU6050.h>
@@ -67,6 +68,8 @@ public:
     void sound(void);
     void stats(void);
     void calibrateStick(void);
-    GFXcanvas16Opt *canvas;
-private:
+    //GFXcanvas16Opt *canvas;
+    TFT_eSPI canvas;
+    TFT_eSprite spr_background;
+private:    
 };

@@ -34,7 +34,6 @@ void Engine::reset()
     //tft->initR(INITR_144GREENTAB);
     //tft->setRotation(0);
     //tft->fillScreen(ST7735_CYAN);
-    spr_background = TFT_eSprite(&canvas);
     spr_background.createSprite(canvas.width(), canvas.height());
 
     canvas.init();

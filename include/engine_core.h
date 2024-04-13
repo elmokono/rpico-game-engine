@@ -69,7 +69,7 @@ public:
     void stats(void);
     void calibrateStick(void);
     //GFXcanvas16Opt *canvas;
-    TFT_eSPI canvas;
-    TFT_eSprite spr_background;
+    TFT_eSPI canvas = TFT_eSPI(128, 128);
+    TFT_eSprite spr_background = TFT_eSprite(&canvas);
 private:    
 };

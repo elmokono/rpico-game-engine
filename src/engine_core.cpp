@@ -6,10 +6,20 @@
 #include <Wire.h>
 #include "engine_core.h"
 
-Adafruit_ST7735 *tft = new Adafruit_ST7735(TFT_CS, TFT_DC, TFT_RST);
-int rgb_r, rgb_g, rgb_b;
+// #define USEFPSLOCK
+// #define USERGBLED
+#define USEFPSCOUNTER
+#define USEJOY
 
-uint lastMillis, lastMillisJoy;
+Adafruit_ST7735 *tft = new Adafruit_ST7735(TFT_CS, TFT_DC, TFT_RST);
+#ifdef USERGBLED
+int rgb_r, rgb_g, rgb_b;
+#endif
+#ifdef USEFPSCOUNTER
+ulong lastMillis;
+#endif
+#ifdef USEJOY
+ulong lastMillisJoy;
 bool button1Pressed = false, button2Pressed = false, button3Pressed = false;
 uint millisToJoy = 100;
 float xCenterAvg = 0;
@@ -17,8 +27,16 @@ float yCenterAvg = 0;
 float stickXCenter = 512;
 float stickYCenter = 512;
 long calibrateSamples = 0;
+#endif
 
+#ifdef USEFPSCOUNTER
 short intFps, fps = 0;
+#endif
+
+#ifdef USEFPSLOCK
+float frameTimeLock = 33.33; //(ms) -> 30 fps
+ulong lastLockMillis = 0;
+#endif
 
 Engine::Engine()
 {
@@ -33,19 +51,26 @@ void Engine::reset()
     tft->setRotation(0);
     tft->fillScreen(ST7735_CYAN);
 
+#ifdef USERGBLED
     pinMode(RGB_R, OUTPUT);
     pinMode(RGB_G, OUTPUT);
     pinMode(RGB_B, OUTPUT);
-
+#endif
+#ifdef USEFPSCOUNTER
     fps = intFps = 0;
     lastMillis = millis();
-
+#endif
+#ifdef USEFPSLOCK
+    lastLockMillis = millis();
+#endif
+#ifdef USEJOY
     // joy
     pinMode(JOY_BT, INPUT_PULLUP);
     pinMode(JOY_B1, INPUT_PULLUP);
     pinMode(JOY_B2, INPUT_PULLUP);
     pinMode(JOY_B3, INPUT_PULLUP);
     lastMillisJoy = millis();
+#endif
 }
 inputs_state Engine::inputs()
 {
@@ -57,7 +82,7 @@ inputs_state Engine::inputs()
     joy.x = 0;
     joy.y = 0;
     joy.novalue = true;
-
+#ifdef USEJOY
     if (millis() - lastMillisJoy < millisToJoy)
     {
         state.joy_state = joy;
@@ -101,9 +126,8 @@ inputs_state Engine::inputs()
     joy.b1down = b1Down == LOW;
     joy.b2down = b2Down == LOW;
     joy.b3down = b3Down == LOW;
-    joy.b1down =
-        joy.novalue = false;
-
+    joy.b1down = joy.novalue = false;
+#endif
     // gyro
 
     // pot
@@ -116,9 +140,11 @@ void Engine::logic()
 }
 void Engine::display()
 {
+#ifdef USERGBLED
     analogWrite(RGB_R, rgb_r * 4);
     analogWrite(RGB_G, rgb_g * 4);
     analogWrite(RGB_B, rgb_b * 4);
+#endif
 
     // swap buffer to tft
     tft->startWrite();
@@ -131,6 +157,16 @@ void Engine::sound()
 }
 void Engine::stats(void)
 {
+// frametime
+#ifdef USEFPSLOCK
+    uint frameTime = millis() - lastLockMillis;
+    if (frameTime < frameTimeLock)
+    {
+        delay(frameTimeLock - frameTime);
+    }
+    lastLockMillis = millis();
+#endif
+#ifdef USEFPSCOUNTER
     intFps++;
     if (millis() - lastMillis >= 1000)
     {
@@ -139,15 +175,20 @@ void Engine::stats(void)
         intFps = 0;
         Serial.println(fps);
     }
+#endif
 }
 void Engine::rgb(ushort r, ushort g, ushort b)
 {
+#ifdef USERGBLED
     rgb_r = r;
     rgb_g = g;
     rgb_b = b;
+#endif
 }
+
 void Engine::calibrateStick(void)
 {
+#ifdef USEJOY
     int ax = analogRead(JOY_AX);
     int ay = analogRead(JOY_AY);
 
@@ -157,4 +198,5 @@ void Engine::calibrateStick(void)
     calibrateSamples++;
     stickXCenter = xCenterAvg / calibrateSamples;
     stickYCenter = yCenterAvg / calibrateSamples;
+#endif
 }

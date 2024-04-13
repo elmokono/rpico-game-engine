@@ -29,7 +29,7 @@ Engine::Engine()
 
 void Engine::reset()
 {
-    canvas = new GFXcanvas16Opt(128, 128);
+    canvas = new GFXcanvas16Opt(ST7735_TFTWIDTH_128, ST7735_TFTHEIGHT_128);
 
     tft->initR(INITR_144GREENTAB);
     tft->setRotation(0);
@@ -47,15 +47,15 @@ void Engine::reset()
     pinMode(JOY_B1, INPUT_PULLUP);
     pinMode(JOY_B2, INPUT_PULLUP);
     pinMode(JOY_B3, INPUT_PULLUP);
-    lastMillisJoy = millis();    
+    lastMillisJoy = millis();
 }
 inputs_state Engine::inputs()
 {
     inputs_state state;
 
-    //joystick
+    // joystick
     joystick_state joy;
-    joy.b1 = joy.b2 = joy.b3 = joy.b1down = joy.b2down = joy.b3down = joy.b1pressed = joy.b2pressed = joy.b3pressed = false;    
+    joy.b1 = joy.b2 = joy.b3 = joy.b1down = joy.b2down = joy.b3down = joy.b1pressed = joy.b2pressed = joy.b3pressed = false;
     joy.x = 0;
     joy.y = 0;
     joy.novalue = true;
@@ -64,7 +64,7 @@ inputs_state Engine::inputs()
     {
         state.joy_state = joy;
         return state;
-    }        
+    }
 
     lastMillisJoy = millis();
 
@@ -103,31 +103,33 @@ inputs_state Engine::inputs()
     joy.b1down = b1Down == LOW;
     joy.b2down = b2Down == LOW;
     joy.b3down = b3Down == LOW;
-    joy.b1down = 
-    joy.novalue = false;
+    joy.b1down =
+        joy.novalue = false;
 
-    //gyro
+    // gyro
 
-    //pot
+    // pot
 
     state.joy_state = joy;
     return state;
 }
 void Engine::logic()
 {
-    
 }
 void Engine::display()
-{   
+{
     analogWrite(RGB_R, rgb_r * 4);
     analogWrite(RGB_G, rgb_g * 4);
     analogWrite(RGB_B, rgb_b * 4);
 
-    tft->drawRGBBitmap(0, 0, canvas->getBuffer(), tft->height(), tft->width());
+    // swap buffer to tft
+    tft->startWrite();
+    tft->setAddrWindow(0, 0, ST7735_TFTWIDTH_128, ST7735_TFTHEIGHT_128);
+    tft->writePixels(canvas->getBuffer(), ST7735_TFTWIDTH_128 * ST7735_TFTHEIGHT_128);
+    tft->endWrite();
 }
 void Engine::sound()
 {
-
 }
 void Engine::stats(void)
 {

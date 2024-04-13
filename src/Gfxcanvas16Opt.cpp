@@ -23,10 +23,14 @@ void GFXcanvas16Opt::fillBitmap(const uint16_t *bitmap, uint16_t keyColor)
 
 void GFXcanvas16Opt::drawRGBBitmap(uint16_t x, uint16_t y, const uint16_t *bitmap, uint16_t w, uint16_t h, uint16_t keyColor)
 {
+  uint16_t pixel;
   for (int16_t j = 0; j < h; j++, y++)
     for (int16_t i = 0; i < w; i++)
-      if (bitmap[j * w + i] != keyColor) // transparent
-        writePixel(x + i, y, bitmap[j * w + i]);
+    {
+      pixel = bitmap[j * w + i];
+      if (pixel != keyColor) // transparent
+        writePixel(x + i, y, pixel);
+    }
 }
 
 void GFXcanvas16Opt::drawRGBBitmap(uint16_t x, uint16_t y, const uint16_t *bitmap, uint16_t w, uint16_t h)

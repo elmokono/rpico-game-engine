@@ -29,6 +29,4 @@ void loop(void)
   engine->sound();
   //fps
   engine->stats();
-
-  delay(1);
 }
